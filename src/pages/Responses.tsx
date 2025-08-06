@@ -48,6 +48,7 @@ export default function Responses() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedResponse, setSelectedResponse] = useState<EmailResponse | null>(null);
   const [customMessage, setCustomMessage] = useState<string>("");
+  const [customSubject, setCustomSubject] = useState<string>("");
   const [sendingAutoReply, setSendingAutoReply] = useState<string | null>(null);
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
@@ -134,7 +135,7 @@ export default function Responses() {
     try {
       let result;
       if (templateType === "custom") {
-        result = await apiClient.sendAutoReply(responseId, templateType, customMessage);
+        result = await apiClient.sendAutoReply(responseId, templateType, customMessage, customSubject);
       } else {
         result = await apiClient.sendAutoReply(responseId, templateType);
       }
@@ -162,6 +163,7 @@ export default function Responses() {
     } finally {
       setSendingAutoReply(null);
       setCustomMessage("");
+      setCustomSubject("");
     }
   };
 
@@ -425,7 +427,13 @@ export default function Responses() {
                                     </Select>
                                   </div>
                                   {selectedResponse?.selectedTemplate === "custom" && (
-                                    <div className="w-full my-2">
+                                    <div className="w-full my-2 space-y-2">
+                                      <Input
+                                        placeholder="Custom Subject"
+                                        value={customSubject}
+                                        onChange={e => setCustomSubject(e.target.value)}
+                                        className="w-full"
+                                      />
                                       <Textarea
                                         placeholder="Type your custom auto-response message here..."
                                         value={customMessage}
@@ -437,13 +445,13 @@ export default function Responses() {
                                   )}
                                   <Button 
                                     onClick={() => {
-                                      if (selectedResponse?.selectedTemplate === "custom" && customMessage.trim()) {
+                                      if (selectedResponse?.selectedTemplate === "custom" && customMessage.trim() && customSubject.trim()) {
                                         handleAutoReply(response.id, "custom");
                                       } else {
                                         handleAutoReply(response.id, selectedResponse?.selectedTemplate || 'default');
                                       }
                                     }}
-                                    disabled={sendingAutoReply === response.id || (selectedResponse?.selectedTemplate === "custom" && !customMessage.trim())}
+                                    disabled={sendingAutoReply === response.id || (selectedResponse?.selectedTemplate === "custom" && (!customMessage.trim() || !customSubject.trim()))}
                                   >
                                     {sendingAutoReply === response.id ? (
                                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />

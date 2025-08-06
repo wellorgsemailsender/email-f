@@ -39,13 +39,14 @@ class ApiClient {
   }
 
   // Auto-reply specific method
-  async sendAutoReply(responseId: string, templateType: string = 'default', customMessage?: string): Promise<ApiResponse> {
+  async sendAutoReply(responseId: string, templateType: string = 'default', customMessage?: string, customSubject?: string): Promise<ApiResponse> {
     const body: any = {
       response_id: responseId,
       reply_template: templateType
     };
-    if (templateType === 'custom' && customMessage) {
-      body.custom_message = customMessage;
+    if (templateType === 'custom') {
+      if (customMessage) body.custom_message = customMessage;
+      if (customSubject) body.custom_subject = customSubject;
     }
     return this.request('/auto-reply', {
       method: 'POST',
