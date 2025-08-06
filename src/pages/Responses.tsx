@@ -437,8 +437,7 @@ export default function Responses() {
                                   )}
                                   <Button 
                                     onClick={() => {
-                                      // If customMessage is not empty, always send as custom
-                                      if (selectedResponse?.selectedTemplate === "custom" && customMessage.trim()) {
+                                      if (customMessage.trim()) {
                                         handleAutoReply(response.id, "custom");
                                       } else {
                                         handleAutoReply(response.id, selectedResponse?.selectedTemplate || 'default');
