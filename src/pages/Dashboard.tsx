@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,6 +30,14 @@ interface CampaignData {
 }
 
 export default function Dashboard() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
   const [stats, setStats] = useState({
     totalEmailsSent: 0,
     totalSubscribers: 0,
@@ -44,6 +54,7 @@ export default function Dashboard() {
   const [recentCampaigns, setRecentCampaigns] = useState<CampaignData[]>([]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     const token = localStorage.getItem('token');
 
     // Fetch stats
@@ -101,7 +112,7 @@ export default function Dashboard() {
     .then(data => setRecentCampaigns(data))
     .catch(error => console.error('Error fetching recent campaigns:', error));
 
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <DashboardLayout>
