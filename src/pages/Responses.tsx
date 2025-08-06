@@ -436,7 +436,14 @@ export default function Responses() {
                                     </div>
                                   )}
                                   <Button 
-                                    onClick={() => handleAutoReply(response.id, selectedResponse?.selectedTemplate || 'default')} 
+                                    onClick={() => {
+                                      // If customMessage is not empty, always send as custom
+                                      if (selectedResponse?.selectedTemplate === "custom" && customMessage.trim()) {
+                                        handleAutoReply(response.id, "custom");
+                                      } else {
+                                        handleAutoReply(response.id, selectedResponse?.selectedTemplate || 'default');
+                                      }
+                                    }}
                                     disabled={sendingAutoReply === response.id || (selectedResponse?.selectedTemplate === "custom" && !customMessage.trim())}
                                   >
                                     {sendingAutoReply === response.id ? (
