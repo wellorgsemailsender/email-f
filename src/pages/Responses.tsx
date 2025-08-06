@@ -359,37 +359,47 @@ export default function Responses() {
                                   {/* Auto-reply Preview */}
                                   <div>
                                     <h4 className="font-medium mb-2">Auto-reply Preview:</h4>
-                                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                      <p className="text-sm text-blue-800 font-medium mb-2">
-                                        Subject: {selectedResponse?.selectedTemplate === 'unsubscribe' ? 'Unsubscribe Request Processed' : 
-                                                 selectedResponse?.selectedTemplate === 'complaint' ? 'Your Concern Has Been Received' : 
-                                                 'Thank you for your message'}
-                                      </p>
-                                      <div className="text-sm text-blue-700">
-                                        {selectedResponse?.selectedTemplate === 'unsubscribe' ? (
-                                          <>
-                                            <p>Dear Customer,</p>
-                                            <p>Your unsubscribe request has been processed. You will no longer receive promotional emails from us.</p>
-                                            <p>If you have any questions, please contact us at hr@wellorgs.com</p>
-                                            <p>Thank you,<br/>Customer Service Team</p>
-                                          </>
-                                        ) : selectedResponse?.selectedTemplate === 'complaint' ? (
-                                          <>
-                                            <p>Dear Customer,</p>
-                                            <p>We have received your concern and take it seriously. Our team will review your message and respond within 24 hours.</p>
-                                            <p>Your feedback is important to us and helps us improve our services.</p>
-                                            <p>Best regards,<br/>Customer Relations Team</p>
-                                          </>
-                                        ) : (
-                                          <>
-                                            <p>Dear Valued Customer,</p>
-                                            <p>Thank you for your email. We have received your message and will respond within 24-48 hours.</p>
-                                            <p>If this is urgent, please contact us directly at hr@wellorgs.com</p>
-                                            <p>Best regards,<br/>Customer Service Team</p>
-                                          </>
-                                        )}
+                                    {selectedResponse?.selectedTemplate === 'custom' ? (
+                                      <Textarea
+                                        value={customMessage}
+                                        onChange={e => setCustomMessage(e.target.value)}
+                                        placeholder="Type your custom auto-response message here..."
+                                        className="w-full bg-blue-50 border border-blue-200 text-blue-800 font-medium"
+                                        rows={7}
+                                      />
+                                    ) : (
+                                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <p className="text-sm text-blue-800 font-medium mb-2">
+                                          Subject: {selectedResponse?.selectedTemplate === 'unsubscribe' ? 'Unsubscribe Request Processed' : 
+                                                   selectedResponse?.selectedTemplate === 'complaint' ? 'Your Concern Has Been Received' : 
+                                                   'Thank you for your message'}
+                                        </p>
+                                        <div className="text-sm text-blue-700">
+                                          {selectedResponse?.selectedTemplate === 'unsubscribe' ? (
+                                            <>
+                                              <p>Dear Customer,</p>
+                                              <p>Your unsubscribe request has been processed. You will no longer receive promotional emails from us.</p>
+                                              <p>If you have any questions, please contact us at hr@wellorgs.com</p>
+                                              <p>Thank you,<br/>Customer Service Team</p>
+                                            </>
+                                          ) : selectedResponse?.selectedTemplate === 'complaint' ? (
+                                            <>
+                                              <p>Dear Customer,</p>
+                                              <p>We have received your concern and take it seriously. Our team will review your message and respond within 24 hours.</p>
+                                              <p>Your feedback is important to us and helps us improve our services.</p>
+                                              <p>Best regards,<br/>Customer Relations Team</p>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <p>Dear Valued Customer,</p>
+                                              <p>Thank you for your email. We have received your message and will respond within 24-48 hours.</p>
+                                              <p>If this is urgent, please contact us directly at hr@wellorgs.com</p>
+                                              <p>Best regards,<br/>Customer Service Team</p>
+                                            </>
+                                          )}
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
                                   </div>
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2">
