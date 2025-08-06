@@ -47,6 +47,7 @@ export default function Responses() {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedResponse, setSelectedResponse] = useState<EmailResponse | null>(null);
+  const [customMessage, setCustomMessage] = useState<string>("");
   const [sendingAutoReply, setSendingAutoReply] = useState<string | null>(null);
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
@@ -130,24 +131,24 @@ export default function Responses() {
     }
 
     setSendingAutoReply(responseId);
-    
     try {
-      const result = await apiClient.sendAutoReply(responseId, templateType);
-
+      let result;
+      if (templateType === "custom") {
+        result = await apiClient.sendAutoReply(responseId, templateType, customMessage);
+      } else {
+        result = await apiClient.sendAutoReply(responseId, templateType);
+      }
       if (result.success) {
         toast({
           title: "Auto-reply sent successfully",
           description: result.message || "An automatic response has been sent to the customer."
         });
-        
         // Update the local state to reflect the change
-        // In a real app, you might want to refetch the data or update the specific response
         const updatedResponses = responses.map(response => 
           response.id === responseId 
             ? { ...response, processed: true }
             : response
         );
-        // You would typically update this through a state management solution
       } else {
         throw new Error(result.error || 'Failed to send auto-reply');
       }
@@ -160,6 +161,7 @@ export default function Responses() {
       });
     } finally {
       setSendingAutoReply(null);
+      setCustomMessage("");
     }
   };
 
@@ -405,15 +407,27 @@ export default function Responses() {
                                         <SelectValue placeholder="Select template" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="default">Default Response</SelectItem>
-                                        <SelectItem value="unsubscribe">Unsubscribe Confirmation</SelectItem>
-                                        <SelectItem value="complaint">Complaint Acknowledgment</SelectItem>
+                                    <SelectItem value="default">Default Response</SelectItem>
+                                    <SelectItem value="unsubscribe">Unsubscribe Confirmation</SelectItem>
+                                    <SelectItem value="complaint">Complaint Acknowledgment</SelectItem>
+                                    <SelectItem value="custom">Custom Message</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>
+                                  {selectedResponse?.selectedTemplate === "custom" && (
+                                    <div className="w-full my-2">
+                                      <Textarea
+                                        placeholder="Type your custom auto-response message here..."
+                                        value={customMessage}
+                                        onChange={e => setCustomMessage(e.target.value)}
+                                        className="w-full"
+                                        rows={5}
+                                      />
+                                    </div>
+                                  )}
                                   <Button 
                                     onClick={() => handleAutoReply(response.id, selectedResponse?.selectedTemplate || 'default')} 
-                                    disabled={sendingAutoReply === response.id}
+                                    disabled={sendingAutoReply === response.id || (selectedResponse?.selectedTemplate === "custom" && !customMessage.trim())}
                                   >
                                     {sendingAutoReply === response.id ? (
                                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
